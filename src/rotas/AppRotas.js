@@ -7,6 +7,7 @@ import ProdutorRotas from "../rotas/ProdutorRotas"
 
 import Coracao from "../assets/coracao.svg";
 import Home from "../assets/home.svg";
+import User from "../assets/user-regular.svg";
 
 const Tab = createBottomTabNavigator();
 let tamanho = 20
@@ -22,7 +23,7 @@ export default function AppRotas(){
           Icon = Coracao;
         }
 
-        return <Icon color={color} width={tamanho} height={tamanho} />
+        return <Icon color={color} fill={color} width={tamanho} height={tamanho} />
       },
       tabBarActiveTintColor: "#2A9F85",
       tabBarInactiveTintColor: "#C7C7C7",
