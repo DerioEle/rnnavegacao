@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, Text, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -11,34 +11,34 @@ export default function Produtores({ melhoresProdutores }) {
   const navigation = useNavigation();
   const route = useRoute();
 
+  const [ exibeMensagem, setExibeMensagem ] = useState(false);
+
   const lista = useProdutores(melhoresProdutores);
   const { tituloProdutores, mensagemCompra } = useTextos();
 
   const nomeCompra = route.params?.compra.nome;
+  const timestampCompra = route.params?.compra.timestamp;
   const mensagemCompleta = mensagemCompra?.replace("$NOME", nomeCompra);
 
-  const TopoLista1 = () => {
+  useEffect(() => {
+    setExibeMensagem(!!nomeCompra);
+    let timeout;
+
+    if (nomeCompra){
+      timeout = setTimeout(() => {
+        setExibeMensagem(false);
+      }, 3000);
+    }
+
+    return ()=> clearTimeout(timeout);
+  }, [timestampCompra]);
+
+  const TopoLista = () => {
     return <>
       <Topo melhoresProdutores={melhoresProdutores} />
-      <Text style={estilos.compra}>{ mensagemCompleta }</Text>
+      { exibeMensagem && <Text style={estilos.compra}>{ mensagemCompleta }</Text> }
       <Text style={estilos.titulo}>{ tituloProdutores }</Text>
     </>
-  }
-
-  const TopoLista2 = () => {
-    return <>
-      <Topo melhoresProdutores={melhoresProdutores} />
-      <Text style={estilos.titulo}>{ tituloProdutores }</Text>
-    </>
-  }
-
-  const TopoCerto = () => {
-    if (nomeCompra != undefined){
-      return <TopoLista1/>
-    }
-    else {
-      return <TopoLista2/>
-    }
   }
 
   return <FlatList
@@ -51,7 +51,7 @@ export default function Produtores({ melhoresProdutores }) {
       }} />
     }
     keyExtractor={({ nome }) => nome}
-    ListHeaderComponent={TopoCerto}
+    ListHeaderComponent={ TopoLista }
     style={estilos.lista} />
 }
 
